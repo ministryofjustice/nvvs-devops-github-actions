@@ -7,4 +7,5 @@ on:
 
 jobs:
   issues-to-project:
-    Uses: .github/workflows/issues-to-project-action.yml@main
+    uses: ./.github/workflows/issues-to-project-action.yml
+  
