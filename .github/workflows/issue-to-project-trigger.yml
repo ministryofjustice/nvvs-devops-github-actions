@@ -4,9 +4,10 @@ on:
   issues:
     types:
       - opened
-      - reopen
+      - reopened
 
 jobs:
   call-workflow:
     uses: ministryofjustice/cloud-operations/.github/workflows/issue-to-project.yml@main
-    secrets: inherit
+    secrets: 
+      github-token: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
