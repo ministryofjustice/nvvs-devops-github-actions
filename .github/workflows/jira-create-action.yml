@@ -1,0 +1,11 @@
+name: Call Jira reusable workflow
+
+on:
+  issues:
+    types:
+      - opened
+      
+jobs:
+  call-workflow-jira-ccreate:
+    uses: ministryofjustice/cloud-operations/.github/workflows/jira-create-workflow-call.yml@main
+    secrets: inherit
