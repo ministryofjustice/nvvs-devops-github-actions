@@ -8,7 +8,5 @@ on:
 jobs:
   call-workflow:
     uses: ministryofjustice/cloud-operations/.github/workflows/issue-to-project.yml@main
-    with:
-      username: mona
     secrets:
       github-token: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
