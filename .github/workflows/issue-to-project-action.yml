@@ -2,6 +2,9 @@ name: Add issues to project
 
 on:
  workflow_call:
+  secrets:
+   github-token:
+    description: 'github token'
 
 jobs:
   add-to-project:
