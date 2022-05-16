@@ -12,4 +12,5 @@ jobs:
         with:
           project-url: https://github.com/orgs/ministryofjustice/projects/11
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
-          
+    env:
+      github-token: ${{ secrets.JIRA_SECRET }}
