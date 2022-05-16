@@ -2,9 +2,6 @@ name: Add issues to project
 
 on:
  workflow_call:
-  secrets:
-   github-token:
-    description: 'github token'
 
 jobs:
   add-to-project:
@@ -12,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/add-to-project@main
+        env:
+         github-token: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
         with:
           project-url: https://github.com/orgs/ministryofjustice/projects/11
-          github-token: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
+   
