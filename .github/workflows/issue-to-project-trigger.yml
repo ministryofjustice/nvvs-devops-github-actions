@@ -8,4 +8,7 @@ on:
 jobs:
   call-workflow:
     uses: ministryofjustice/cloud-operations/.github/workflows/issue-to-project.yml@main
-    secrets: inherit
+    with:
+      username: mona
+    secrets:
+      envPAT: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
