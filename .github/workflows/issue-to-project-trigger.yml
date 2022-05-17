@@ -5,6 +5,8 @@ on:
     types:
       - opened
       - reopened
+env:
+ github-token: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
 
 jobs:
   call-workflow:
