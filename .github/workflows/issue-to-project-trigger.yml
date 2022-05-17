@@ -11,4 +11,6 @@ env:
 jobs:
   call-workflow:
     uses: ministryofjustice/cloud-operations/.github/workflows/issue-to-project.yml@main
+    with:
+      github-token: $env.github-token
     secrets: inherit
