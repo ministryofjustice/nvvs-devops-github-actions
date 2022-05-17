@@ -4,7 +4,7 @@ on:
       JIRA_SECRET:
         description: 'A token passed from the caller workflow'
         required: true
-      JIRA_EAMIL:
+      JIRA_EMAIL:
         description: 'email address passed from the caller workflow'
         required: true
       JIRA_URL:
