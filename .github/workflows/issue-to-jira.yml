@@ -1,14 +1,14 @@
 on:
   workflow_call:
     secrets:
-      JIRA_SECRET:
-        description: 'A token passed from the caller workflow'
+      JIRA_URL:
+        description: 'jira URL passed from the caller workflow'
         required: true
       JIRA_EMAIL:
         description: 'email address passed from the caller workflow'
         required: true
-      JIRA_URL:
-        description: 'jira URL passed from the caller workflow'
+      JIRA_SECRET:
+        description: 'A token passed from the caller workflow'
         required: true
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       id: create
       uses: atlassian/gajira-create@master
       with:
-        project: CNSA
+        project: TC
         issuetype: Story
         summary: |
            ${{ github.event.issue.title }} [GH#${{ github.event.issue.number }}]
