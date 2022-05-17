@@ -8,6 +8,6 @@ on:
 
 jobs:
   call-workflow:
-    uses: ministryofjustice/cloud-operations/.github/workflows/issue-to-project.yml@main
+    uses: ministryofjustice/cloud-operations-github-actions/.github/workflows/issues-to-project-action.yml@main
     secrets:
       github-token: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
