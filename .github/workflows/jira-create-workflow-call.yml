@@ -4,7 +4,10 @@ on:
       JIRA_SECRET:
        description: 'A token passed from the caller workflow'
        required: true
-  
+      JIRA_API_TOKEN:
+       description: 'A API token passed from the caller workflow'
+       required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
