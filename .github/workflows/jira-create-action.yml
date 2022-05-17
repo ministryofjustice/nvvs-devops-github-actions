@@ -8,4 +8,5 @@ on:
 jobs:
   call-workflow-jira-ccreate:
     uses: ministryofjustice/cloud-operations-github-actions/.github/workflows/jira-create-workflow-call.yml@main
-    secrets: inherit
+    secrets:
+      JIRA_SECRET: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
