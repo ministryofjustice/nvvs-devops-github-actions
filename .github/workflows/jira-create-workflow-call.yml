@@ -15,7 +15,7 @@ jobs:
       env:
         JIRA_BASE_URL: https://dsdmoj.atlassian.net/
         JIRA_USER_EMAIL: aaron.robinson1@justice.gov.uk
-        JIRA_SECRET: ${{ secrets.JIRA_SECRET }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_SECRET }}
 
     - name: Create
       id: create
