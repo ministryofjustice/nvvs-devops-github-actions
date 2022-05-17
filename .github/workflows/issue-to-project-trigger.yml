@@ -6,7 +6,7 @@ on:
       - opened
 
 jobs:
-  call-workflow:
-    uses: ministryofjustice/cloud-operations-github-actions/.github/workflows/issue-to-project-action.yml@main
+  call-workflow-issue-to-project:
+    uses: ministryofjustice/cloud-operations-github-actions/.github/workflows/issue-to-project.yml@main
     secrets:
       TECH_SERVICES_GITHUB_TOKEN: ${{ secrets.TECH_SERVICES_GITHUB_TOKEN }}
