@@ -11,4 +11,4 @@ jobs:
     secrets:
       JIRA_URL: ${{ secrets.JIRA_URL }}
       JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
-      JIRA_SECRET: ${{ secrets.JIRA_SECRET }}
+      TECH_SERVICES_JIRA_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
