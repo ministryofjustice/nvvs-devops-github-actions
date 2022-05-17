@@ -6,7 +6,9 @@ on:
       - opened
 
 jobs:
-  call-workflow-jira-ccreate:
-    uses: ministryofjustice/cloud-operations-github-actions/.github/workflows/jira-create-workflow-call.yml@main
+  call-workflow-issue-to-jira:
+    uses: ministryofjustice/cloud-operations-github-actions/.github/workflows/issue-to-jira.yml@main
     secrets:
+      JIRA_URL: ${{ secrets.JIRA_URL }}
+      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
       JIRA_SECRET: ${{ secrets.JIRA_SECRET }}
