@@ -2,8 +2,14 @@ on:
   workflow_call:
     secrets:
       JIRA_SECRET:
-       description: 'A token passed from the caller workflow'
-       required: true
+        description: 'A token passed from the caller workflow'
+        required: true
+      JIRA_EAMIL:
+        description: 'email address passed from the caller workflow'
+        required: true
+      JIRA_URL:
+        description: 'jira URL passed from the caller workflow'
+        required: true
 
 jobs:
   build:
