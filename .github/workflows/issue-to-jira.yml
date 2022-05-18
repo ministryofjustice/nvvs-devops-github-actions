@@ -27,7 +27,7 @@ jobs:
       id: create
       uses: atlassian/gajira-create@master
       with:
-        project: TC
+        project: CNSA
         issuetype: Story
         summary: |
            ${{ github.event.issue.title }} [GH#${{ github.event.issue.number }}]
@@ -47,7 +47,7 @@ jobs:
           issue_number: context.issue.number,
           owner: context.repo.owner,
           repo: context.repo.repo,
-          body: '${{ steps.create.outputs.issue }} added to Jira board and transitioned to done' })
+          body: '${{ steps.create.outputs.issue }} created on Jira board and transitioned to Done' })
         
     - name: Transition issue
       uses: atlassian/gajira-transition@master
