@@ -3,7 +3,7 @@ name: Add Issue to Jira Board
 on:
   issues:
     types:
-      - opened
+      - closed
 
 jobs:
   call-workflow-issue-to-jira:
