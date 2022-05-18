@@ -47,4 +47,4 @@ jobs:
           issue_number: context.issue.number,
           owner: context.repo.owner,
           repo: context.repo.repo,
-          body: '${{ steps.create.outputs.issue }} added to Jira Board 👋 Thanks for reporting!' })
+          body: '${{ steps.create.outputs.issue }} added to Jira Board 👋 Thanks for reporting !' })
