@@ -1,10 +1,10 @@
 on:
   workflow_call:
     secrets:
-      JIRA_URL:
+      TECH_SERVICES_JIRA_URL:
         description: 'jira URL passed from the caller workflow'
         required: true
-      JIRA_EMAIL:
+      TECH_SERVICES_JIRA_EMAIL:
         description: 'email address passed from the caller workflow'
         required: true
       TECH_SERVICES_JIRA_TOKEN:
@@ -19,8 +19,8 @@ jobs:
     - name: Login
       uses: atlassian/gajira-login@master
       env:
-        JIRA_BASE_URL: ${{ secrets.JIRA_URL }}
-        JIRA_USER_EMAIL: ${{ secrets.JIRA_EMAIL }}
+        JIRA_BASE_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
+        JIRA_USER_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
         JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
 
     - name: Create
