@@ -1,0 +1,7 @@
+github-actions:
+  - '**'
+
+documentation:
+  - "diagrams/**"
+  - "documentation/**"
+  - "README.md"
