@@ -8,8 +8,10 @@ module.exports = {
     includeForks: true,
     repositories: [
       'ministryofjustice/cloud-operations-github-actions',
-      'ministryofjustice/staff-infrastructure-monitoring-config',
       'ministryofjustice/staff-infrastructure-monitoring',
+      'ministryofjustice/staff-infrastructure-monitoring-config',
+      'ministryofjustice/staff-device-dns-dhcp-infrastructure',
+      'ministryofjustice/staff-device-shared-services-infrastructure',
     ],
     packageRules: [
       {
