@@ -9,6 +9,7 @@ module.exports = {
     repositories: [
       'ministryofjustice/cloud-operations-github-actions',
       'ministryofjustice/staff-infrastructure-monitoring-config',
+      'ministryofjustice/staff-infrastructure-monitoring',
     ],
     packageRules: [
       {
