@@ -1,4 +1,4 @@
-dhcp-dns:
+github-actions:
   - '**'
 
 documentation:
