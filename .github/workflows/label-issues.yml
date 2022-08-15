@@ -16,7 +16,7 @@ jobs:
       issues: write
     steps:
       - name: Label issues
-        uses: andymckay/labeler@5acd83ef2e0b267577bb5b3f9fd6d635efae54e5
+        uses: andymckay/labeler@3a4296e9dcdf9576b0456050db78cfd34853f260
         with:
           add-labels: "GitHub Actions"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
