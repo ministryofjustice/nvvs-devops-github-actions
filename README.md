@@ -17,7 +17,7 @@ Marketplace Link: https://github.com/marketplace/actions/simple-issue-labeler
 
 Copy the `label-issues.yml` to your repository (`.github/workflows/label-issues.yml`) then edit the 'add-labels:' line to include any labels you want to automatically add to the GitHub issue for the repository.
 
-``` yaml
+```yaml
 name: Label issues
 on:
   issues:
@@ -51,15 +51,14 @@ Edit the `.github/labeler.yml` file with a list of labels and file paths to auto
 
 Example:
 
-``` yaml
+```yaml
 github-actions:
-  - '**'
+  - "**"
 
 documentation:
   - "diagrams/**"
   - "documentation/**"
   - "README.md"
-
 ```
 
 ## Issue To Jira
