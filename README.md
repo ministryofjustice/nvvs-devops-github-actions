@@ -7,7 +7,7 @@ This repository was created as a central location to hold, manage and maintain o
 - [Label Issues](#label-issues)
 - [Label Pull Request](#label-pull-request)
 - [Issue to Jira](#issue-to-jira)
-- [Issue to Project](#issue-to-project) 
+- [Issue to Project](#issue-to-project)
 
 ## Label Issues
 
@@ -15,7 +15,7 @@ Automatically adds or removes labels from issues.
 
 Marketplace Link: https://github.com/marketplace/actions/simple-issue-labeler
 
-Copy the `label-issues.yml` to your repository (`.github/workflows/label-issues.yml`) then edit the 'add-labels:' line to include any labels you want to automatically add to the GitHub issue for the repository. 
+Copy the `label-issues.yml` to your repository (`.github/workflows/label-issues.yml`) then edit the 'add-labels:' line to include any labels you want to automatically add to the GitHub issue for the repository.
 
 ```
 name: Label issues
@@ -36,6 +36,7 @@ jobs:
           add-labels: "infrastructure-monitoring, test-label"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
 Once an issue is then opened or reopened the issue will then get automatically labelled.
 
 ## Label Pull Request
@@ -44,11 +45,12 @@ Automatically label new pull requests based on the paths of files being changed.
 
 Marketplace Link: https://github.com/marketplace/actions/labeler
 
-To automatically label pull requests add the `label-pull-request.yml` file to your GitHub repository (`./github/workflows/label-pull-request.yml`) and the `labeler.yml` file (`.github/labeler.yml`). 
+To automatically label pull requests add the `label-pull-request.yml` file to your GitHub repository (`./github/workflows/label-pull-request.yml`) and the `labeler.yml` file (`.github/labeler.yml`).
 
-Edit the `.github/labeler.yml` file with a list of labels and file paths to automatically label. ( ** - All files)
+Edit the `.github/labeler.yml` file with a list of labels and file paths to automatically label. ( \*\* - All files)
 
-Example: 
+Example:
+
 ```
 github-actions:
   - '**'
@@ -68,7 +70,7 @@ Add the `issue-to-jira-trigger.yml` to the repository (`./github/workflows/issue
 
 ## Issue To Project
 
-Use this action to automatically add the current issue or pull request to a GitHub project. 
+Use this action to automatically add the current issue or pull request to a GitHub project.
 
 Marketplace Link: https://github.com/marketplace/actions/add-to-github-projects
 
