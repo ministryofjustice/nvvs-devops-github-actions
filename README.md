@@ -1,4 +1,4 @@
-[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&labelColor=32393F&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fcloud-operations-github-actions)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#cloud-operations-github-actions "Link to report")
+[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&labelColor=32393F&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fnvvs-devops-github-actions)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#nvvs-devops-github-actions "Link to report")
 
 # NVVS DevOps GitHub Actions
 
@@ -65,7 +65,7 @@ documentation:
 
 Automatically add issues to Jira Board on close.
 
-Add the `issue-to-jira-trigger.yml` to the repository (`./github/workflows/issue-to-jira-trigger.yml`), this file calls the `ministryofjustice/cloud-operations-github-actions/.github/workflows/issue-to-jira.yml@main` action when an issue is closed. This action then creates a ticket on our Jira board and transitions it to 'Done'. (a comment is also added the GitHub issue containing a link to the Jira ticket.)
+Add the `issue-to-jira-trigger.yml` to the repository (`./github/workflows/issue-to-jira-trigger.yml`), this file calls the `ministryofjustice/nvvs-devops-github-actions/.github/workflows/issue-to-jira.yml@main` action when an issue is closed. This action then creates a ticket on our Jira board and transitions it to 'Done'. (a comment is also added the GitHub issue containing a link to the Jira ticket.)
 
 ## Issue To Project
 
@@ -73,4 +73,4 @@ Use this action to automatically add the current issue or pull request to a GitH
 
 Marketplace Link: https://github.com/marketplace/actions/add-to-github-projects
 
-Add the `issue-to-project.yml` to the repository (`./github/workflows/issue-to-project.yml`), this file call the `ministryofjustice/cloud-operations-github-actions/.github/workflows/issue-to-project.yml@main` action when an issue is opened. This action automatically adds the issue the GitHub project specified in the `project-url`.
+Add the `issue-to-project.yml` to the repository (`./github/workflows/issue-to-project.yml`), this file call the `ministryofjustice/nvvs-devops-github-actions/.github/workflows/issue-to-project.yml@main` action when an issue is opened. This action automatically adds the issue the GitHub project specified in the `project-url`.

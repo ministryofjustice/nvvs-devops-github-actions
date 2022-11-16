@@ -7,7 +7,7 @@ module.exports = {
     platform: 'github',
     includeForks: true,
     repositories: [
-      'ministryofjustice/cloud-operations-github-actions',
+      'ministryofjustice/nvvs-devops-github-actions',
       'ministryofjustice/staff-infrastructure-monitoring',
       'ministryofjustice/staff-infrastructure-monitoring-config',
       'ministryofjustice/staff-device-dns-dhcp-infrastructure',

@@ -7,7 +7,7 @@ on:
 
 jobs:
   call-workflow-issue-to-jira:
-    uses: ministryofjustice/cloud-operations-github-actions/.github/workflows/issue-to-jira.yml@main
+    uses: ministryofjustice/nvvs-devops-github-actions/.github/workflows/issue-to-jira.yml@main
     secrets:
       TECH_SERVICES_JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
       TECH_SERVICES_JIRA_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
