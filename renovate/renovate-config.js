@@ -13,7 +13,7 @@ module.exports = {
       'ministryofjustice/staff-device-dns-dhcp-infrastructure',
       'ministryofjustice/staff-device-shared-services-infrastructure',
       'ministryofjustice/staff-technology-services-github-teams',
-        
+      'ministryofjustice/staff-infrastructure-network-services',
     ],
     packageRules: [
       {
