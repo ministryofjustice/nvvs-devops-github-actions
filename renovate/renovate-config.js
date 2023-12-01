@@ -7,14 +7,14 @@ module.exports = {
     platform: 'github',
     includeForks: true,
     repositories: [
+        'ministryofjustice/network-access-control-infrastructure',
         'ministryofjustice/nvvs-devops-github-actions',
-        'ministryofjustice/staff-infrastructure-monitoring',
-        'ministryofjustice/staff-infrastructure-monitoring-config',
         'ministryofjustice/staff-device-dns-dhcp-infrastructure',
         'ministryofjustice/staff-device-shared-services-infrastructure',
-        'ministryofjustice/staff-technology-services-github-teams',
+        'ministryofjustice/staff-infrastructure-monitoring',
+        'ministryofjustice/staff-infrastructure-monitoring-config',
         'ministryofjustice/staff-infrastructure-network-services',
-        'ministryofjustice/network-access-control-infrastructure',
+        'ministryofjustice/staff-technology-services-github-teams',
     ],
     packageRules: [
       {
