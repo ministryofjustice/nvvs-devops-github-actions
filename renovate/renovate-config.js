@@ -20,5 +20,8 @@ module.exports = {
         dependencyDashboardApproval: false,
         stabilityDays: 0,
       },
+        {
+            "ignorePaths": [".github/workflows/label-issues.yml"]
+        }
     ],
   };
