@@ -11,7 +11,7 @@ module.exports = {
         // 'ministryofjustice/nvvs-devops-github-actions',
         // 'ministryofjustice/staff-device-dns-dhcp-infrastructure',
         // 'ministryofjustice/staff-device-shared-services-infrastructure',
-        // 'ministryofjustice/staff-infrastructure-network-services',
+        'ministryofjustice/staff-infrastructure-network-services',
         'ministryofjustice/staff-technology-services-github-teams',
     ],
     packageRules: [
