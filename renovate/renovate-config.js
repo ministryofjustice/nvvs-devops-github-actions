@@ -19,9 +19,7 @@ module.exports = {
         matchDatasources: ["terraform-module","terraform-provider"],
         dependencyDashboardApproval: false,
         stabilityDays: 0,
-      },
-        {
-            "ignorePaths": [".github/workflows/label-issues.yml"]
-        }
+      }
     ],
+    "ignorePaths": [".github/workflows/label-issues.yml"]
   };
