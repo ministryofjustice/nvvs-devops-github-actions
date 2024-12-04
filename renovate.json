@@ -1,5 +1,4 @@
 {
-  "_comment": "Further to outcome of ND-568 disabling renovatebot temporarily to avoid conflicts with Dependabot",
   "enabled": false,
   "$schema": "https://docs.renovatebot.com/renovate-schema.json"
 }
