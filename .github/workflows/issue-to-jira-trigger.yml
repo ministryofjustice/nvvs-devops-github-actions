@@ -1,9 +1,10 @@
-name: Add Issue to Jira Board On Close
+name: Add Dependabot Issue to Jira Board On Open/Modified
 
 on:
-  issues:
+  pull_request:
     types:
-      - closed
+      - opened
+      - review_requested
 
 jobs:
   call-workflow-issue-to-jira:
