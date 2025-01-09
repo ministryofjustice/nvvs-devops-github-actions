@@ -27,7 +27,7 @@ jobs:
         id: create
         uses: atlassian/gajira-create@master
         with:
-          project: ND
+          project: CNSA
           issuetype: Story
           summary: |
             ${{ github.event.issue.title }} [GH#${{ github.event.issue.number }}]
