@@ -10,9 +10,6 @@ on:
       TECH_SERVICES_JIRA_TOKEN:
         description: 'A token passed from the caller workflow'
         required: true
-      TECH_SERVICES_JIRA_PROJECT:
-        description: 'JIRA Project code passed from the caller workflow'
-        required: true
 
 jobs:
   check-open-prs:
