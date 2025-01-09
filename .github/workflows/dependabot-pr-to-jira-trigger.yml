@@ -1,0 +1,17 @@
+name: Add Issue to Jira Board On new Dependabot PR's
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  call-workflow-dependabot-pr-to-jira:
+    #if: github.event.issues.user.login == 'dependabot[bot]'
+    uses: ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml
+    secrets:
+      TECH_SERVICES_JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
+      TECH_SERVICES_JIRA_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+      TECH_SERVICES_JIRA_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
