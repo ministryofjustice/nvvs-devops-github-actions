@@ -23,29 +23,14 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
 
-
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-
       - name: Create
         id: create
         uses: atlassian/gajira-create@master
         with:
           project: 'ND'
           issuetype: 'Story'
-          summary: |
-            ${{ github.event.pull_request.title }} [GH#${{ github.event.pull_request.number }}]
-          description: |
-            {panel}
-            *Created By:* ${{ github.event.pull_request.user.login }}
-            [Github permalink|${{ github.event.pull_request.html_url }}]
-            Dependency names: ${{ steps.metadata.outputs.dependency-names }}
-            Dependency type: ${{ steps.metadata.outputs.dependency-type }}
-            Update type: ${{ steps.metadata.outputs.update-type }}
-            {panel}
+          summary: 'New Issue from GitHub: ${{ github.event.issue.title }}'
+          description: 'This task was automatically created from an issue in GitHub: ${{ github.event.issue.html_url }}'
 
       - name: Log created issue
         run: echo "Issue ${{ steps.create.outputs.issue }} was created"
@@ -64,4 +49,12 @@ jobs:
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.create.outputs.issue }}
-          transition: "Backlog"
+          transition: "DevRefinement"
+
+      - name: List all pull requests
+        run: |
+          curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/${{ github.repository }}/pulls" > prs.json
+          echo "Fetched pull requests:"
+          cat prs.json

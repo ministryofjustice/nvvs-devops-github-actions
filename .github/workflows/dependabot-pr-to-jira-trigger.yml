@@ -1,6 +1,13 @@
 name: Add Issue to Jira Board On new Dependabot PR's
 
-on: pull_request
+on:
+  push:
+    branches:
+      - ND-271-spike-dependabot-ticket-auto-creation-in-jira
+  pull_request:
+    branches:
+      - main
+
 permissions:
   contents: read
   pull-requests: read
