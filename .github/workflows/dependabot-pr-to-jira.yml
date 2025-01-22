@@ -38,7 +38,7 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(jq -r '.[] | select(.author.login == "app/dependabot" and .isBot == true) | "- PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)\n  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json)
+          PR_DESCRIPTION=$(jq -r '.[] | select(.author.login == "app/dependabot") | "- PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)\n  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json)
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
       - name: Create
         id: create
