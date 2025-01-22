@@ -25,9 +25,14 @@ jobs:
 
       - name: List open Dependabot PRs on main branch
         env:
-         GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author,createdAt --jq '.[] | select(.author.login == "app/dependabot" and .author.type == "Bot") | {number: .number, title: .title, head: .headRefName, url: .url, author: .author.login, date_raised: .createdAt}' > dependabot-prs.json
+          gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot") | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json 
+
+      - name: Verify JSON format
+        run: |
+          cat dependabot-prs.json | jq empty || exit 1
+
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
@@ -51,11 +56,19 @@ jobs:
       - name: Log created issue
         run: echo "Issue ${{ steps.create.outputs.issue }} was created"
 
-      - name: Comment on GitHub
+      - name: Comment on github
         uses: actions/github-script@v7
         with:
           script: |
-            const prs = JSON.parse(require('fs').readFileSync('dependabot-prs.json', 'utf8'));
+            const fs = require('fs');
+            let prs;
+            try {
+              const data = fs.readFileSync('dependabot-prs.json', 'utf8');
+              prs = JSON.parse(data);
+            } catch (error) {
+              core.setFailed(`Failed to read or parse dependabot-prs.json: ${error.message}`);
+              return;
+            }
             prs.forEach(pr => {
               const number = pr.number;
               github.rest.issues.createComment({
