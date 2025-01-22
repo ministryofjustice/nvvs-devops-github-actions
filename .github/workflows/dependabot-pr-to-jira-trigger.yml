@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - ND-271-spike-dependabot-ticket-auto-creation-in-jira
+  pull_request:
+    branches:
+      - main
 
 jobs:
   call-workflow-dependabot-pr-to-jira:
