@@ -27,8 +27,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot") | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json 
-
+          gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot") | "* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)"' | sed 's/"/\\"/g'
       - name: Verify JSON format
         run: |
           cat dependabot-prs.json | jq empty || exit 1
@@ -36,8 +35,8 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(jq -r '"* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.head)"' dependabot-prs.json)
-          echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
+          PR_DESCRIPTION=$(jq -r '"* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.head)"' dependabot-prs.json | sed 's/"/\\"/g')
+          echo "PR_DESCRIPTION=\"$PR_DESCRIPTION\"" >> $GITHUB_ENV
 
       - name: Create
         id: create
