@@ -7,7 +7,6 @@ on:
 
 jobs:
   call-workflow-dependabot-pr-to-jira:
-    if: github.ref == 'refs/heads/ND-271-spike-dependabot-ticket-auto-creation-in-jira'
     uses: ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml@ND-271-spike-dependabot-ticket-auto-creation-in-jira
     secrets:
       TECH_SERVICES_JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
