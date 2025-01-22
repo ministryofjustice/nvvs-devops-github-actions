@@ -23,14 +23,20 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
 
+      - name: List open Dependabot PRs on main branch
+        id: list-prs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot" and .author.is_bot)' > pr_list.json
+
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot") | "* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)"' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/%0A/g')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_DESCRIPTION=$(jq -r '.[] | "* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)"' pr_list.json | sed ':a;N;$!ba;s/\n/%0A/g')
+          echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
-      - name: Create Jira Ticket
+      - name: Create
         id: create
         uses: atlassian/gajira-create@master
         with:
@@ -40,42 +46,29 @@ jobs:
           description: |
             {panel}
             *Dependabot PRs:*
-            ${{ steps.format-prs.outputs.pr_description }}
+            ${{ env.PR_DESCRIPTION }}
             {panel}
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Log created issue
         run: echo "Issue ${{ steps.create.outputs.issue }} was created"
 
-      - name: Comment on github
+      - name: Comment on GitHub
         uses: actions/github-script@v7
         with:
-            script: |
-              const fs = require('fs');
-              let prs;
-              try {
-                const data = fs.readFileSync('dependabot-prs.json', 'utf8');
-                prs = JSON.parse(data);
-              } catch (error) {
-                core.setFailed(`Failed to read or parse dependabot-prs.json: ${error.message}`);
-                return;
-              }
-              prs.forEach(pr => {
-                const number = pr.number;
-                github.rest.issues.createComment({
-                  issue_number: number,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: `${{ steps.create.outputs.issue }} created on Jira board and transitioned to backlog`
-                });
+          script: |
+            const fs = require('fs');
+            const prs = JSON.parse(fs.readFileSync('pr_list.json', 'utf8'));
+            prs.forEach(pr => {
+              github.rest.issues.createComment({
+                issue_number: pr.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `${{ steps.create.outputs.issue }} created on Jira board and transitioned to backlog`
               });
+            });
 
       - name: Transition issue
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.create.outputs.issue }}
           transition: "Backlog"
-
