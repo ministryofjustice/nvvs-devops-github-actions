@@ -14,7 +14,7 @@ on:
 jobs:
   check-open-prs:
     runs-on: ubuntu-latest
-    name: Create Jira Ticket
+    name: Create or Update Jira Ticket
     steps:
       - name: Login
         uses: atlassian/gajira-login@master
@@ -38,34 +38,40 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/%0A/g')
+          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/\\n/g')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
-      - name: Create
-        id: create
-        uses: atlassian/gajira-create@master
-        with:
-          project: 'ND'
-          issuetype: 'Story'
-          summary: 'Dependabot PRs for ${{ github.repository }}'
-          description: |
-            {panel}
-            *Dependabot PRs :*
-            {panel}
-            ${{ env.PR_DESCRIPTION }}
-
-      - name: Add label to created issue
+      - name: Check for existing Jira ticket with Dependabot label
+        id: check-ticket
         run: |
-          issue_key="${{ steps.create.outputs.issue }}"
-          jira_base_url="${{ secrets.TECH_SERVICES_JIRA_URL }}"
-          jira_email="${{ secrets.TECH_SERVICES_JIRA_EMAIL }}"
-          jira_token="${{ secrets.TECH_SERVICES_JIRA_TOKEN }}"
-          curl -X PUT -u "$jira_email:$jira_token" -H "Content-Type: application/json" \
-          --data '{"update":{"labels":[{"set":["Dependabot"]}]}}' \
-          "$jira_base_url/rest/api/3/issue/$issue_key"
+          response=$(curl -s -u "${{ secrets.TECH_SERVICES_JIRA_EMAIL }}:${{ secrets.TECH_SERVICES_JIRA_TOKEN }}" -X GET "${{ secrets.TECH_SERVICES_JIRA_URL }}/rest/api/3/search?jql=labels=Dependabot AND project=ND AND summary~'${{ github.repository }}'")
+          issue_key=$(echo $response | jq -r '.issues[0].key // empty')
+          echo "issue_key=$issue_key" >> $GITHUB_ENV
 
-      - name: Log created issue
-        run: echo "Issue ${{ steps.create.outputs.issue }} was created"
+      - name: Create or Update Jira Ticket
+        id: create-update
+        run: |
+          if [ -n "${{ env.issue_key }}" ]; then
+            echo "Updating existing Jira ticket: ${{ env.issue_key }}"
+            curl -u "${{ secrets.TECH_SERVICES_JIRA_EMAIL }}:${{ secrets.TECH_SERVICES_JIRA_TOKEN }}" -X PUT -H "Content-Type: application/json" \
+            --data "{\"fields\":{\"description\":\"${{ env.PR_DESCRIPTION }}\"}}" \
+            "${{ secrets.TECH_SERVICES_JIRA_URL }}/rest/api/3/issue/${{ env.issue_key }}"
+          else
+            echo "Creating new Jira ticket"
+            issue_key=$(curl -u "${{ secrets.TECH_SERVICES_JIRA_EMAIL }}:${{ secrets.TECH_SERVICES_JIRA_TOKEN }}" -X POST -H "Content-Type: application/json" \
+            --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs for ${{ github.repository }}\",\"description\":\"${{ env.PR_DESCRIPTION }}\",\"issuetype\":{\"name\":\"Story\"},\"labels\":[\"Dependabot\"]}}" \
+            "${{ secrets.TECH_SERVICES_JIRA_URL }}/rest/api/3/issue" | jq -r .key)
+            echo "issue_key=$issue_key" >> $GITHUB_ENV
+          fi
+
+      - name: Log created or updated issue
+        run: |
+          if [ -n "${{ env.issue_key }}" ]; then
+            echo "Issue ${{ env.issue_key }} was created or updated"
+          else
+            echo "Failed to create or update issue"
+            exit 1
+          fi
 
       - name: Comment on GitHub
         uses: actions/github-script@v7
@@ -78,12 +84,12 @@ jobs:
                 issue_number: pr.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `${{ steps.create.outputs.issue }} created on Jira board and transitioned to backlog`
+                body: `${{ env.issue_key }} created or updated on Jira board`
               });
             });
 
       - name: Transition issue
         uses: atlassian/gajira-transition@master
         with:
-          issue: ${{ steps.create.outputs.issue }}
+          issue: ${{ env.issue_key }}
           transition: "Backlog"
