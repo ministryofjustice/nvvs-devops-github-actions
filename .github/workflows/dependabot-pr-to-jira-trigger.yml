@@ -1,14 +1,13 @@
 name: Add Issue to Jira Board On new Dependabot PR's
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
-    types: [ opened, review_requested ]
+      - ND-271-spike-dependabot-ticket-auto-creation-in-jira
 
 jobs:
   call-workflow-dependabot-pr-to-jira:
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: github.ref == 'refs/heads/ND-271-spike-dependabot-ticket-auto-creation-in-jira'
     uses: ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml@ND-271-spike-dependabot-ticket-auto-creation-in-jira
     secrets:
       TECH_SERVICES_JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
