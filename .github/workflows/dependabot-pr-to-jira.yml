@@ -45,6 +45,7 @@ jobs:
         id: check-ticket
         run: |
           response=$(curl -s -u "${{ secrets.TECH_SERVICES_JIRA_EMAIL }}:${{ secrets.TECH_SERVICES_JIRA_TOKEN }}" -X GET "${{ secrets.TECH_SERVICES_JIRA_URL }}/rest/api/3/search?jql=labels=Dependabot AND project=ND AND summary~'${{ github.repository }}'")
+          echo $response
           if [ $? -ne 0 ]; then
           echo "Failed to query Jira API"
           exit 1
