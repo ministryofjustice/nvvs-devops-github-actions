@@ -27,7 +27,6 @@ jobs:
         id: format-prs
         run: |
           PR_DESCRIPTION=$(gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot") | "* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)"' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/%0A/g')
-          echo "::set-env name=PR_DESCRIPTION::$PR_DESCRIPTION"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -41,7 +40,7 @@ jobs:
           description: |
             {panel}
             *Dependabot PRs:*
-            ${{ env.PR_DESCRIPTION }}
+            ${{ steps.format-prs.outputs.pr_description }}
             {panel}
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
