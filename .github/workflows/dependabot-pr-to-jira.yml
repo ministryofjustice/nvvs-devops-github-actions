@@ -38,7 +38,7 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(jq -r '.[] | "* /n/nPR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/ministryofjustice/nvvs-devops-github-actions/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/%0A/g')
+          PR_DESCRIPTION=$(jq -r '.[] | "* %0A PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/ministryofjustice/nvvs-devops-github-actions/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/%0A/g')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Create
