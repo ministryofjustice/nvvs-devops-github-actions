@@ -38,7 +38,7 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(jq -r '.[] | "* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)\n  URL: https://github.com/ministryofjustice/nvvs-devops-github-actions/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/%0A/g')
+          PR_DESCRIPTION=$(jq -r '.[] | "* \nPR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)\n  URL: https://github.com/ministryofjustice/nvvs-devops-github-actions/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/%0A/g')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Create
@@ -47,7 +47,7 @@ jobs:
         with:
           project: 'ND'
           issuetype: 'Story'
-          summary: 'Dependabot PRs for ministryofjustice/nvvs-devops-github-actions'
+          summary: 'Dependabot PRs for ${{ github.repository }}'
           description: |
             {panel}
             *Dependabot PRs:*
