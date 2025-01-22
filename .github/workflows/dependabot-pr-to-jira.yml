@@ -24,6 +24,8 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
 
       - name: List open Dependabot PRs on main branch
+        env:
+         GH_TOKEN: ${{ github.token }}
         run: |
             gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --author dependabot[bot] --json number,title,headRefName --jq '.[] | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json
 
