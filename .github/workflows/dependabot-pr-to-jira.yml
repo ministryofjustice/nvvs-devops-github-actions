@@ -44,19 +44,13 @@ jobs:
       - name: Check for existing Jira ticket with Dependabot label
         id: check-ticket
         run: |
-          response=$(curl -s -u "${{ secrets.TECH_SERVICES_JIRA_EMAIL }}:${{ secrets.TECH_SERVICES_JIRA_TOKEN }}" -X GET "${{ secrets.TECH_SERVICES_JIRA_URL }}/rest/api/3/search?jql=labels=Dependabot AND project=ND AND summary~'${{ github.repository }}'")
-          echo $response
-          if [ $? -ne 0 ]; then
-          echo "Failed to query Jira API"
-          exit 1
-          fi
-          issue_key=$(echo $response | jq -r '.issues[0].key // empty')
-          if [ -z "$issue_key" ]; then
-          echo "No existing Jira ticket found"
-          else
-          echo "Found existing Jira ticket: $issue_key"
-          fi
-          echo "issue_key=$issue_key" >> $GITHUB_ENV
+            issue_key=$(gh issue list --repo ${{ github.repository }} --label Dependabot --json number,title --jq '.[] | select(.title | contains("Dependabot")) | .number' | head -n 1)
+            if [ -z "$issue_key" ]; then
+              echo "No existing Jira ticket found"
+            else
+              echo "Found existing Jira ticket: $issue_key"
+            fi
+            echo "issue_key=$issue_key" >> $GITHUB_ENV
 
       - name: Create or Update Jira Ticket
         id: create-update
@@ -97,6 +91,7 @@ jobs:
                 body: `${{ env.issue_key }} created or updated on Jira board`
               });
             });
+
 
       - name: Transition issue
         uses: atlassian/gajira-transition@master
