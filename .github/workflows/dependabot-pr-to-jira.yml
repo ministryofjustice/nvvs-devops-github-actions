@@ -27,7 +27,7 @@ jobs:
         env:
          GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot" and .author.is_bot) | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json
+        #  gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot" and .author.is_bot) | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json
 
       - name: Format PRs for Jira ticket Description
         id: format-prs
@@ -64,8 +64,6 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             body: `${{ steps.create.outputs.issue }} created on Jira board and transitioned to backlog`
-            })
-            };
 
       - name: Transition issue
         uses: atlassian/gajira-transition@master
