@@ -32,7 +32,7 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(cat dependabot-prs.json)
+          PR_DESCRIPTION=$(cat dependabot-prs.json | jq -sRr @json)
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Create
