@@ -51,6 +51,8 @@ jobs:
             echo "Found existing Jira ticket: $issue_key"
           fi
           echo "issue_key=$issue_key" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Create or Update Jira Ticket
         id: create-update
