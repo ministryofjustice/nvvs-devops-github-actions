@@ -27,12 +27,11 @@ jobs:
         env:
          GH_TOKEN: ${{ github.token }}
         run: |
-        #  gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot" and .author.is_bot) | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json
+          gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot" and .author.is_bot) | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json
 
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-        # PR_DESCRIPTION=$(cat dependabot-prs.json | jq -r '.[] | select(type == "object") | "- PR #\(.number): \(.title) (branch: \(.head))"' | tr '\n' ' ')
           PR_DESCRIPTION=$(cat dependabot-prs.json)
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
