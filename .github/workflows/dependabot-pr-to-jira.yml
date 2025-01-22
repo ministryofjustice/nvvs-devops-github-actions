@@ -33,7 +33,7 @@ jobs:
         id: format-prs
         run: |
         # PR_DESCRIPTION=$(cat dependabot-prs.json | jq -r '.[] | select(type == "object") | "- PR #\(.number): \(.title) (branch: \(.head))"' | tr '\n' ' ')
-          PR_DESCRIPTION=$cat dependabot-prs.json
+          PR_DESCRIPTION=$(cat dependabot-prs.json)
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Create
