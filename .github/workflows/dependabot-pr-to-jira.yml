@@ -44,13 +44,13 @@ jobs:
       - name: Check for existing Jira ticket with Dependabot label
         id: check-ticket
         run: |
-            issue_key=$(gh issue list --repo ${{ github.repository }} --label Dependabot --json number,title --jq '.[] | select(.title | contains("Dependabot")) | .number' | head -n 1)
-            if [ -z "$issue_key" ]; then
-              echo "No existing Jira ticket found"
-            else
-              echo "Found existing Jira ticket: $issue_key"
-            fi
-            echo "issue_key=$issue_key" >> $GITHUB_ENV
+          issue_key=$(gh issue list --repo ${{ github.repository }} --label Dependabot --json number,title --jq '.[] | select(.title | contains("Dependabot")) | .number' | head -n 1)
+          if [ -z "$issue_key" ]; then
+            echo "No existing Jira ticket found"
+          else
+            echo "Found existing Jira ticket: $issue_key"
+          fi
+          echo "issue_key=$issue_key" >> $GITHUB_ENV
 
       - name: Create or Update Jira Ticket
         id: create-update
@@ -92,9 +92,9 @@ jobs:
               });
             });
 
-
       - name: Transition issue
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ env.issue_key }}
           transition: "Backlog"
+        continue-on-error: true
