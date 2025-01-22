@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   call-workflow-dependabot-pr-to-jira:
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'sb21460'
     uses: ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml@ND-271-spike-dependabot-ticket-auto-creation-in-jira
     secrets:
       TECH_SERVICES_JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
