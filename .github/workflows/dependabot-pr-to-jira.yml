@@ -29,26 +29,30 @@ jobs:
         with:
           project: 'ND'
           issuetype: 'Story'
-          summary: |
-            ${{ github.event.pull_request.title }} [GH#${{ github.event.pull_request.number }}]
+          summary: 'Dependabot PRs for ${{ github.repository_url }}'
           description: |
             {panel}
-            *Created By:* ${{ github.event.pull_request.user.login }}
-            [Github permalink|${{ github.event.pull_request.html_url }}]
+            *Dependabot PRs:*
+            $(cat dependabot-prs.json | jq -r '.[] | "- PR #\(.number): \(.title) (branch: \(.head))"')
             {panel}
 
       - name: Log created issue
         run: echo "Issue ${{ steps.create.outputs.issue }} was created"
 
-      - name: comment on github
+      - name: Comment on GitHub
         uses: actions/github-script@v7
         with:
-          script: |
-            github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '${{ steps.create.outputs.issue }} created on Jira board and transitioned to backlog' })
+            script: |
+              prs=$(cat dependabot-prs.json)
+              for pr in $(echo "${prs}" | jq -c '.[]'); do
+                number=$(echo "${pr}" | jq -r '.number')
+                github.rest.issues.createComment({
+                  issue_number: number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: '${{ steps.create.outputs.issue }} created on Jira board and transitioned to backlog'
+                })
+              done
 
       - name: Transition issue
         uses: atlassian/gajira-transition@master
