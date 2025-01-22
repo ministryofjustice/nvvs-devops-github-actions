@@ -29,11 +29,11 @@ jobs:
         run: |
             gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --author dependabot[bot] --json number,title,headRefName --jq '.[] | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json
 
-    - name: Format PRs for Jira description
-      id: format-prs
-      run: |
-      PR_DESCRIPTION=$(cat dependabot-prs.json | jq -r '.[] | select(type == "object") | "- PR #\(.number): \(.title) (branch: \(.head))"' | tr '\n' ' ')
-      echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
+      - name: Format PRs for Jira description
+        id: format-prs
+        run: |
+          PR_DESCRIPTION=$(cat dependabot-prs.json | jq -r '.[] | select(type == "object") | "- PR #\(.number): \(.title) (branch: \(.head))"' | tr '\n' ' ')
+          echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Create
         id: create
@@ -41,7 +41,7 @@ jobs:
         with:
           project: 'ND'
           issuetype: 'Story'
-          summary: 'Dependabot PRs for ${{ github.repository_url }}'
+          summary: 'Dependabot PRs for ministryofjustice/nvvs-devops-github-actions'
           description: |
             {panel}
             *Dependabot PRs:*
