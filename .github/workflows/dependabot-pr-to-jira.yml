@@ -23,10 +23,8 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
 
-      - name: Get list of open Dependabot PRs on main branch and format PRs for Jira ticket Description
+      - name: Format PRs for Jira ticket Description
         id: format-prs
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_DESCRIPTION=$(gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author --jq '.[] | select(.author.login == "app/dependabot") | "* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)"' | sed 's/"/\\"/g')
           echo "PR_DESCRIPTION=\"$PR_DESCRIPTION\"" >> $GITHUB_ENV
