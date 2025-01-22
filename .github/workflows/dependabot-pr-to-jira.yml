@@ -33,6 +33,7 @@ jobs:
             echo "Invalid JSON output from gh pr list"
             cat pr_list.json
             exit 1
+          fi
 
       - name: Format PRs for Jira ticket Description
         id: format-prs
