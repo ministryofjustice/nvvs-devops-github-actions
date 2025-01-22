@@ -28,7 +28,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName,author > pr_list.json
+          gh pr list --repo ${{ github.repository }} --base main --json number,title,headRefName,author > pr_list.json
           if ! jq -e . pr_list.json > /dev/null 2>&1; then
             echo "Invalid JSON output from gh pr list"
             cat pr_list.json
@@ -38,7 +38,7 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(jq -r '.[] | "* <br> PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/ministryofjustice/nvvs-devops-github-actions/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/%0A/g')
+          PR_DESCRIPTION=$(jq -r '.[] | "* <br> PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/%0A/g')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Create
@@ -50,9 +50,9 @@ jobs:
           summary: 'Dependabot PRs for ${{ github.repository }}'
           description: |
             {panel}
-            *Dependabot PRs:*
-            ${{ env.PR_DESCRIPTION }}
+            *Dependabot PRs :*
             {panel}
+            ${{ env.PR_DESCRIPTION }}
 
       - name: Log created issue
         run: echo "Issue ${{ steps.create.outputs.issue }} was created"
