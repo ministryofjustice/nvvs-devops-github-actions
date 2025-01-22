@@ -27,14 +27,12 @@ jobs:
         env:
          GH_TOKEN: ${{ github.token }}
         run: |
-            gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --author dependabot[bot] --json number,title,headRefName --jq '.[] | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json
-            echo "gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --author dependabot[bot] --json number,title,headRefName --jq '.[] | {number: .number, title: .title, head: .headRefName}'"
-      
+            gh pr list --repo ministryofjustice/nvvs-devops-github-actions --base main --json number,title,headRefName --jq '.[] | {number: .number, title: .title, head: .headRefName}' > dependabot-prs.json
 
       - name: Format PRs for Jira description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(cat dependabot-prs.json | jq -r '.[] | select(type == "object") | "- PR #\(.number): \(.title) (branch: \(.head))"' | tr '\n' ' ')
+          PR_DESCRIPTION=$(cat dependabot-prs.json | jq -r '.[] | select(type == "object") | "- PR #\(.number): \(.title) (.author) (branch: \(.head))"' | tr '\n' ' ')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Create
