@@ -36,8 +36,7 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DETAILS=$(jq -r '.[] | "* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.headRefName)"' dependabot-prs.json | tr '\n' ' ')
-          PR_DESCRIPTION="Dependabot PRs:\n\n${PR_DETAILS}"
+          PR_DESCRIPTION=$(jq -r '"* PR Number: \(.number)\n  Title: \(.title)\n  Branch: \(.head)"' dependabot-prs.json)
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Create
