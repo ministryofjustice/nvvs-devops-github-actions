@@ -55,11 +55,11 @@ jobs:
               ${{ env.PR_DESCRIPTION }}
 
       - name: Find Jira Issue Key
-        uses: atlassian/gajira-find-issue-key@v2
+        uses: atlassian/gajira-find-issue-key@v3
         id: find-issue
         with:
           project: 'ND'
-          pattern: 'Dep*'  # Regex pattern to match issue keys (e.g., .* to match all)
+          pattern: 'ND-'  # Regex pattern to match issue keys (e.g., .* to match all)
 
       - name: Show Jira Issue Key
         run: |
