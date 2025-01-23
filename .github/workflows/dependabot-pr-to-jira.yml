@@ -54,12 +54,31 @@ jobs:
               {panel}
               ${{ env.PR_DESCRIPTION }}
 
-      - name: Find Jira Issue Key
-        uses: atlassian/gajira-find-issue-key@v3
-        id: find-issue
-        with:
-          project: 'ND'
-          pattern: '.*'  # Regex pattern to match issue keys (e.g., .* to match all)
+      - name: Get Jira Issue with Dependabot Label
+        env:
+            JIRA_BASE_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
+            JIRA_USER_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+            JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
+        run: |
+          echo "Searching for issues with the 'dependabot' label..."
+          
+          # Define JQL query to find issues with the 'dependabot' label
+          JQL_QUERY='labels="dependabot"'
+          
+          # Make API request to Jira to search for issues with the given label
+          response=$(curl -s -u $JIRA_USER_EMAIL:$JIRA_API_TOKEN \
+            -X GET \
+            -H "Content-Type: application/json" \
+            "$JIRA_BASE_URL/rest/api/2/search?jql=$JQL_QUERY")
+
+          # Extract the issue keys from the response (this is a simple example, assuming there's at least one result)
+          issue_keys=$(echo $response | jq -r '.issues[0].key')
+
+          if [ -z "$issue_keys" ]; then
+            echo "No issues found with the 'dependabot' label."
+          else
+            echo "Found Jira issue(s) with dependabot label: $issue_keys"
+          fi
 
       - name: Show Jira Issue Key
         run: |
