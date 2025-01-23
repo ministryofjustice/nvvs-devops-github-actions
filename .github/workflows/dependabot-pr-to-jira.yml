@@ -54,31 +54,52 @@ jobs:
               {panel}
               ${{ env.PR_DESCRIPTION }}
 
-      - name: Get Jira Issue with Dependabot Label
+      - name: Get Jira Issues with Dependabot Label in Project ND
         env:
-            JIRA_BASE_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
-            JIRA_USER_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+            JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
             JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
+            JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
         run: |
-          echo "Searching for issues with the 'dependabot' label..."
-          
-          # Define JQL query to find issues with the 'dependabot' label
-          JQL_QUERY='labels="dependabot"'
-          
-          # Make API request to Jira to search for issues with the given label
-          response=$(curl -s -u $JIRA_USER_EMAIL:$JIRA_API_TOKEN \
-            -X GET \
-            -H "Content-Type: application/json" \
-            "$JIRA_BASE_URL/rest/api/2/search?jql=$JQL_QUERY")
-
-          # Extract the issue keys from the response (this is a simple example, assuming there's at least one result)
-          issue_keys=$(echo $response | jq -r '.issues[0].key')
-
-          if [ -z "$issue_keys" ]; then
-            echo "No issues found with the 'dependabot' label."
-          else
-            echo "Found Jira issue(s) with dependabot label: $issue_keys"
-          fi
+            echo "Searching for issues with the 'dependabot' label in project 'ND'..."
+            
+            # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
+            JQL_QUERY='project="ND" AND labels="dependabot"'
+            
+            # Make API request to Jira to search for issues with the given label in the 'ND' project
+            response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
+              -X GET \
+              -H "Content-Type: application/json" \
+              "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY")
+            
+            # Extract all issue keys from the response (loop through all issues)
+            issue_keys=$(echo $response | jq -r '.issues[].key')
+            
+            if [ -z "$issue_keys" ]; then
+              echo "No issues found with the 'dependabot' label in project 'ND'."
+            else
+              # Iterate over all found issue keys and update each one
+              echo "Found Jira issue(s) with dependabot label:"
+              for issue_key in $issue_keys; do
+                echo "Updating description of issue $issue_key..."
+            
+                # Prepare the updated description (you can customize the description text)
+                NEW_DESCRIPTION="This issue has been updated due to Dependabot's automated changes."
+            
+                # Use Jira API to update the description of each found issue
+                update_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
+                  -X PUT \
+                  -H "Content-Type: application/json" \
+                  -d '{
+                        "fields": {
+                          "description": "'"$NEW_DESCRIPTION"'"
+                        }
+                      }' \
+                  "$JIRA_URL/rest/api/2/issue/$issue_key")
+            
+                # Check the response for success (this part can be customized based on your needs)
+                echo "Description updated for issue $issue_key."
+              done
+            fi
 
       - name: Show Jira Issue Key
         run: |
