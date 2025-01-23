@@ -47,7 +47,7 @@ jobs:
         with:
           project: 'ND'
           issuetype: 'Story'
-          summary: 'ND- Dependabot PRs for ${{ github.repository }}'
+          summary: 'Dependabot PRs for ${{ github.repository }}'
           description: |
               {panel}
               *Dependabot PRs :*
@@ -59,7 +59,7 @@ jobs:
         id: find-issue
         with:
           project: 'ND'
-          pattern: 'ND-'  # Regex pattern to match issue keys (e.g., .* to match all)
+          pattern: '.*'  # Regex pattern to match issue keys (e.g., .* to match all)
 
       - name: Show Jira Issue Key
         run: |
