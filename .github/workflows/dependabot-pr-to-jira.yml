@@ -41,32 +41,7 @@ jobs:
           PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/\\n/g')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
-      - name: Search Jira tickets and set ISSUE_TYPES
-        run: |
-          # Run the Jira API call to fetch issues
-          response=$(curl --request POST \
-            --url 'https://dsdmoj.atlassian.net/rest/api/3/search' \
-            --user "$JIRA_USERNAME:$JIRA_API_TOKEN" \
-            --header 'Accept: application/json' \
-            --header 'Content-Type: application/json' \
-            --data '{
-              "jql": "project = ND AND labels = dependabot",
-              "fields": ["key", "issuetype"]
-            }')
-
-          # Parse the issue types from the JSON response using jq
-          issue_types=$(echo "$response" | jq -r '.issues[].fields.issuetype.name' | paste -sd, -)
-
-          # Set the ISSUE_TYPES environment variable
-          echo "ISSUE_TYPES=$issue_types" >> $GITHUB_ENV
-          
-          # Optional: Print the result for debugging
-          echo "Found issue types: $issue_types"
-        env:
-          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-
-
+      
 
       - name: Log created or updated issue
         run: |
