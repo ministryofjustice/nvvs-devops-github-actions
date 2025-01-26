@@ -41,65 +41,22 @@ jobs:
           PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/\\n/g')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
-
-      - name: Get Jira Issues with Dependabot Label in Project ND
-        env:
-          JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
-          JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
-          JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+      - name: Search Jira tickets
         run: |
-          echo "Searching for issues with the 'dependabot' label in project 'ND'..."
-
-          # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
-          JQL_QUERY='project="ND" AND labels="dependabot"'
-
-          # Make API request to Jira to search for issues with the given label in the 'ND' project
-          response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
-            -X GET \
-            -H "Content-Type: application/json" \
-            "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY")
-
-          # Include new curl POST request for Jira autocomplete data
           curl --request POST \
-            --url 'https://dsdmoj.atlassian.net/rest/api/3/jql/autocompletedata' \
+            --url 'https://dsdmoj.atlassian.net/rest/api/3/search' \
             --user "$JIRA_USERNAME:$JIRA_API_TOKEN" \
             --header 'Accept: application/json' \
             --header 'Content-Type: application/json' \
             --data '{
-              "includeCollapsedFields": true,
-              "projectIds": ["ND"]
-            }'
+              "jql": "project = ND AND labels = dependabot",
+              "fields": ["key", "summary", "labels"]
+            }' > jira_ticket.json
+          echo "Jira tickets: $(cat jira_ticket.json)"
+        env:
+          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
-          # Extract all issue keys from the response (loop through all issues)
-          issue_keys=$(echo $response | jq -r '.issues[].key')
-
-          if [ -z "$issue_keys" ]; then
-            echo "No issues found with the 'dependabot' label in project 'ND'."
-          else
-            # Iterate over all found issue keys and update each one
-            echo "Found Jira issue(s) with dependabot label:"
-            echo "ISSUE_KEYS=$ISSUE_KEYS" >> $GITHUB_ENV
-            for issue_key in $issue_keys; do
-              echo "Updating description of issue $issue_key..."
-
-              # Prepare the updated description (you can customize the description text)
-              NEW_DESCRIPTION="This issue has been updated due to Dependabot's automated changes."
-
-              # Use Jira API to update the description of each found issue
-              update_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
-                -X PUT \
-                -H "Content-Type: application/json" \
-                -d '{
-                      "fields": {
-                        "description": "'"$NEW_DESCRIPTION"'"
-                      }
-                    }' \
-                "$JIRA_URL/rest/api/2/issue/$issue_key")
-
-              # Check the response for success (this part can be customized based on your needs)
-              echo "Description updated for issue $issue_key."
-            done
-          fi
 
       - name: Log created or updated issue
         run: |
