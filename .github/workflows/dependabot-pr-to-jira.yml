@@ -51,10 +51,8 @@ jobs:
           
           # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
           JQL_QUERY='project="ND" AND labels="jira_dependabot"'
-          
-          QUERY = "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY"
-          
-          echo "QUERY=$QUERY" >> $GITHUB_ENV
+           
+          echo "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY"
           
           # Make API request to Jira to search for issues with the given label in the 'ND' project
           response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
