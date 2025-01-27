@@ -44,7 +44,7 @@ jobs:
           CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
           echo "Searching for issues with the 'Dependabot' label in project 'ND'..."
           
-        # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
+          # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
           JQL_QUERY='project = ND AND labels in (Dependabot)'
           
           # Make API request to Jira to search for issues with the given label in the 'ND' project
