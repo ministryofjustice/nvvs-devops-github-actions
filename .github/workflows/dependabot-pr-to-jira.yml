@@ -41,16 +41,16 @@ jobs:
           JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
         run: |
           CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
-          echo "Searching for issues with the 'JDTEST' label in project 'ND'..."
+          echo "Searching for issues with the 'Dependabot' label in project 'ND'..."
           
           # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
-          JQL_QUERY='project = ND AND labels in (JDTEST)'
+          JQL_QUERY='project = ND AND labels in (Dependabot)'
           
           # Make API request to Jira to search for issues with the given label in the 'ND' project
           response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
             -X GET \
             -H "Content-Type: application/json" \
-            "$JIRA_URL/rest/api/2/search?jql=project=ND%20AND%20labels%3D%27JDTEST%27")
+            "$JIRA_URL/rest/api/2/search?jql=project=ND%20AND%20labels%3D%27Dependabot%27")
           
           # Check if the response is valid JSON
           if echo "$response" | jq -e . >/dev/null 2>&1; then
@@ -58,11 +58,11 @@ jobs:
             issue_id=$(echo "$response" | jq -r '.issues[0].key')
           
             if [ -z "$issue_id" ]; then
-              echo "No issues found with the 'JDTEST' label in project 'ND'. Creating a new issue..."
+              echo "No issues found with the 'Dependabot' label in project 'ND'. Creating a new issue..."
               create_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
                  -X POST \
                  -H "Content-Type: application/json" \
-                 --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"labels\":[\"JDTEST\"]}}" \
+                 --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"labels\":[\"Dependabot\"]}}" \
                  "$JIRA_URL/rest/api/2/issue")
               new_issue_id=$(echo "$create_response" | jq -r '.key')
               echo "Created new issue $new_issue_id"
