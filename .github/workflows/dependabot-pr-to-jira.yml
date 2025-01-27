@@ -58,6 +58,8 @@ jobs:
             -H "Content-Type: application/json" \
             "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY")
           
+          echo "RESPONSE=$response" >> $GITHUB_ENV
+          
           # Check if the response is valid JSON
           if echo "$response" | jq -e . >/dev/null 2>&1; then
             # Extract the first issue key from the response
