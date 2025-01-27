@@ -21,7 +21,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr list --repo ${{ github.repository }} --base main --json number,title,headRefName,author --author dependabot > pr_list.json
+          gh pr list --repo ${{ github.repository }} --base main --json number,title,headRefName,author > pr_list.json
           if ! jq -e . pr_list.json > /dev/null 2>&1; then
             echo "Invalid JSON output from gh pr list"
             cat pr_list.json
@@ -31,7 +31,7 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  \nTitle: \(.title)  \nBranch: \(.headRefName)  \nURL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/\\n/g')
+          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  \nTitle: \(.title)  \nBranch: \(.headRefName) \nAuthor: (.author) \nURL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/\\n/g')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Find Jira tickets in project ND labeled Dependabot
