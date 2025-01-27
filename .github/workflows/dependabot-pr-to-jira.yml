@@ -50,13 +50,12 @@ jobs:
           echo "Searching for issues with the 'jira_dependabot' label in project 'ND'..."
           
           # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
-          JQL_QUERY='project="ND" AND labels="jira_dependabot"'
+          JQL_QUERY='project = ND AND labels = jira_dependabot AND fields=id,key'
           
           # Make API request to Jira to search for issues with the given label in the 'ND' project
           response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
-            -X POST \
+            -X GET \
             -H "Content-Type: application/json" \
-            --data "{\"jql\":\"$JQL_QUERY\",\"fields\":[\"id\",\"key\"]}" \
             "$JIRA_URL/rest/api/2/search")
           
           # Write the response to an environment variable
