@@ -53,19 +53,19 @@ jobs:
           JQL_QUERY='project="ND" AND labels="jira_dependabot"'
           
           # Make API request to Jira to search for issues with the given label in the 'ND' project
-          response=$(curl -D- \
-            -u $JIRA_USERNAME:$JIRA_API_TOKEN \
+          response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
             -X POST \
             -H "Content-Type: application/json" \
-            --data '{"jql":"project = ND","fields":["id","key"]}' \
+            --data "{\"jql\":\"$JQL_QUERY\",\"fields\":[\"id\",\"key\"]}" \
             "$JIRA_URL/rest/api/2/search")
           
-          echo $response
+          # Write the response to an environment variable
+          echo "JIRA_RESPONSE=$response" >> $GITHUB_ENV
           
           # Check if the response is valid JSON
           if echo "$response" | jq -e . >/dev/null 2>&1; then
             # Extract the first issue key from the response
-            issue_id=$(echo $response | jq -r '.issues[0].key')
+            issue_id=$(echo "$response" | jq -r '.issues[0].key')
           
             if [ -z "$issue_id" ]; then
               echo "No issues found with the 'jira_dependabot' label in project 'ND'."
@@ -77,9 +77,9 @@ jobs:
             echo "Invalid JSON response"
             exit 1
           fi
-    
-          - name: Log created or updated issue
-            run: |
+
+      - name: Log created or updated issue
+        run: |
               if [ -n "${{ env.ISSUE_ID }}" ]; then
                 echo "Issue ${{ env.ISSUE_ID }} was created or updated"
               else
