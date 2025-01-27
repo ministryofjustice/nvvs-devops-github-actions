@@ -54,9 +54,13 @@ jobs:
             -X GET \
             -H "Content-Type: application/json" \
             "$JIRA_URL/rest/api/2/search?jql=project=ND%20AND%20labels%3D%27Dependabot%27")
+          
           echo "$response" > jira_search_response.json
+          
           issue_count=$(echo "$response" | jq '.issues | length')
           echo "Number of issues found: $issue_count"
+          echo "ISSUE_COUNT=$issue_count" >> $GITHUB_ENV
+          
           if echo "$response" | jq -e . >/dev/null 2>&1; then
             issue_id=$(echo "$response" | jq -r '.issues[0].key // "null"')
             echo "ISSUE_ID=$issue_id" >> $GITHUB_ENV
@@ -67,7 +71,7 @@ jobs:
 
       # Step: Create Jira ticket if none found
       - name: Create Jira ticket
-        if: env.ISSUE_ID == 'null'
+        if: (env.ISSUE_COUNT == 0)
         id: create-jira-ticket
         env:
           JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
@@ -78,7 +82,7 @@ jobs:
           create_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
              -X POST \
              -H "Content-Type: application/json" \
-             --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs for ${{ github.repository }}\",\"description\":\"Repository : ${{ github.repository }} \n $PR_DESCRIPTION\",\"issuetype\":{\"name\":\"Story\"},\"labels\":[\"Dependabot\",\"${{ github.repository }}\"]}}" \
+             --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs for ${{ github.repository }}\",\"description\":\"Repository : ${{ github.repository }} \n $PR_DESCRIPTION\",\"issuetype\":{\"name\":\"Story\"},\"labels\":[\"Dependabot\",\"$(echo ${{ github.repository }} | cut -d'/' -f2)\"]}}" \
              "$JIRA_URL/rest/api/2/issue")
           echo "$create_response" 
           new_issue_id=$(echo "$create_response" | jq -r '.key')
@@ -87,7 +91,7 @@ jobs:
 
       # Step: Update Jira ticket if found
       - name: Update Jira ticket
-        if: env.ISSUE_ID != 'null'
+        if: (env.ISSUE_COUNT > 0)
         id: update-jira-ticket
         env:
           JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
