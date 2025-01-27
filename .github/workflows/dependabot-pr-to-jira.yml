@@ -70,9 +70,6 @@ jobs:
             exit 1
           fi
 
-          # Print the raw response for debugging
-          echo "Response from Jira API: $(echo "$response" | head -n -1)"
-
           # Extract the first issue key from the response using jq
           issue_id=$(echo "$response" | jq -r '.issues[0].key // empty')
 
