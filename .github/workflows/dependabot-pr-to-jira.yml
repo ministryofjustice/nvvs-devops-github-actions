@@ -50,7 +50,7 @@ jobs:
           echo "Searching for issues with the 'jira_dependabot' label in project 'ND'..."
           
           # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
-          JQL_QUERY='labels = jira_dependabot'
+          JQL_QUERY='project = ND AND labels in (JDTEST)'
           
           # Make API request to Jira to search for issues with the given label in the 'ND' project
           response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
