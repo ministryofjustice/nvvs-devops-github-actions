@@ -56,7 +56,7 @@ jobs:
           response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
             -X GET \
             -H "Content-Type: application/json" \
-            "$JIRA_URL/rest/api/2/search/$JQL_QUERY")
+            "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY")
           
           # Write the response to an environment variable
           echo "JIRA_RESPONSE=$response" >> $GITHUB_ENV
