@@ -67,7 +67,7 @@ jobs:
               create_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
                  -X POST \
                  -H "Content-Type: application/json" \
-                 --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"issuetype\":{\"name\"}:\"Story\",\"labels\":[\"Dependabot\"]}}" \
+                 --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"issuetype\":{\"name\":\"Story\"},\"labels\":[\"Dependabot\"]}}" \
                  "$JIRA_URL/rest/api/2/issue")
             
               echo "$create_response" 
