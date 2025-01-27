@@ -28,10 +28,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Get a list of open PRs created by  'dependabot' and save them to a JSON file
-          gh pr list --repo ${{ github.repository }} --base main --json number,title,headRefName -A app/dependabot --search "status:success review:none" > pr_list.json
-          
-          # Check if the output is valid JSON
+        # Get a list of open PRs created by 'app/dependabot' or 'dependabot[bot]' and save them to a JSON file
+          gh pr list --repo ${{ github.repository }} --base main --json number,title,headRefName --search "author:app/dependabot author:dependabot[bot] status:success review:none" > pr_list.json
+  
+        # Check if the output is valid JSON
           if ! jq -e . pr_list.json > /dev/null 2>&1; then
             echo "Invalid JSON output from gh pr list"
             cat pr_list.json
