@@ -53,7 +53,7 @@ jobs:
           response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
             -X GET \
             -H "Content-Type: application/json" \
-            "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY")
+            "$JIRA_URL/rest/api/2/search?jql=project=ND%20AND%20labels%3D%27Dependabot%27")
           echo "$response" > jira_search_response.json
           issue_count=$(echo "$response" | jq '.issues | length')
           echo "Number of issues found: $issue_count"
