@@ -29,7 +29,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # Get a list of open PRs created by 'app/dependabot' or 'dependabot[bot]' and save them to a JSON file
-          gh pr list --repo ${{ github.repository }} --base main --json number,title,headRefName --search "author:app/dependabot author:dependabot[bot] status:success review:none" > pr_list.json
+          gh pr list --repo ${{ github.repository }} --base main --json number,title,headRefName --search "author:app/dependabot author:dependabot[bot]" > pr_list.json
   
           # Check if the output is valid JSON
           if ! jq -e . pr_list.json > /dev/null 2>&1; then
