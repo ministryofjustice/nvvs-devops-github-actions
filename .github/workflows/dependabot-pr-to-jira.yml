@@ -95,7 +95,6 @@ jobs:
       - name: Transition issue
         uses: atlassian/gajira-transition@master
         with:
-          issue: ${{ env.ISSUE_ID
-            }}
+          issue: ${{ env.ISSUE_ID}}
           transition: "Backlog"
         continue-on-error: true
