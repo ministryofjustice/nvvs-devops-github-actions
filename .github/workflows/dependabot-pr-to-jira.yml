@@ -50,16 +50,31 @@ jobs:
           echo "Searching for issues with the 'dependabot' label in project 'ND'..."
 
           # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
-          JQL_QUERY='project="ND" AND labels="Dependabot"'
+          JQL_QUERY="project=ND AND labels=Dependabot"
+
+          # URL encode the JQL query to handle special characters
+          JQL_QUERY=$(echo "$JQL_QUERY" | jq -sRr @uri)
 
           # Make API request to Jira to search for issues with the given label in the 'ND' project
-          response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
+          response=$(curl -s -w "%{http_code}" -u $JIRA_USERNAME:$JIRA_API_TOKEN \
             -X GET \
             -H "Content-Type: application/json" \
-            "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY")
+            "$JIRA_URL/rest/api/3/search?jql=$JQL_QUERY")
 
-          # Extract the first issue key from the response
-          issue_id=$(echo $response | jq -r '.issues[0].key')
+          # Extract HTTP status code
+          http_code=$(echo "$response" | tail -n 1)
+
+          if [ "$http_code" -ne 200 ]; then
+            echo "Error: Received HTTP status code $http_code"
+            echo "Response: $(echo "$response" | head -n -1)"
+            exit 1
+          fi
+
+          # Print the raw response for debugging
+          echo "Response from Jira API: $(echo "$response" | head -n -1)"
+
+          # Extract the first issue key from the response using jq
+          issue_id=$(echo "$response" | jq -r '.issues[0].key // empty')
 
           if [ -z "$issue_id" ]; then
             echo "No issues found with the 'dependabot' label in project 'ND'."
