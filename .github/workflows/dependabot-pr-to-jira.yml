@@ -47,7 +47,7 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
           JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
         run: |
-          echo "Searching for issues with the 'dependabot' label in project 'ND'..."
+          echo "Searching for issues with the 'jira_dependabot' label in project 'ND'..."
 
           # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
           JQL_QUERY="project=ND AND labels=jira_dependabot"
@@ -60,15 +60,6 @@ jobs:
             -X GET \
             -H "Content-Type: application/json" \
             "$JIRA_URL/rest/api/3/search?jql=$JQL_QUERY")
-
-          # Extract HTTP status code
-          http_code=$(echo "$response" | tail -n 1)
-
-          if [ "$http_code" -ne 200 ]; then
-            echo "Error: Received HTTP status code $http_code"
-            echo "Response: $(echo "$response" | head -n -1)"
-            exit 1
-          fi
 
           # Extract the first issue key from the response using jq
           issue_id=$(echo "$response" | jq -r '.issues[0].key // empty')
