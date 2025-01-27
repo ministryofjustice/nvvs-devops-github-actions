@@ -40,6 +40,7 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
           JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
         run: |
+          CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
           echo "Searching for issues with the 'JDTEST' label in project 'ND'..."
           
           # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
