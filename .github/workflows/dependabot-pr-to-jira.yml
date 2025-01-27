@@ -99,7 +99,7 @@ jobs:
           update_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
              -X PUT \
              -H "Content-Type: application/json" \
-             --data "{\"fields\":{\"description\":\"Updated on $CURRENT_DATE \n $PR_DESCRIPTION\"}}" \
+             --data "{\"fields\":{\"description\":\"Updated on $CURRENT_DATE \n Repository : ${{ github.repository }} \n $PR_DESCRIPTION\"}}" \
              "$JIRA_URL/rest/api/2/issue/${{ env.ISSUE_ID }}")
           echo "Updated issue ${{ env.ISSUE_ID }}"
 
