@@ -61,8 +61,7 @@ jobs:
           if echo "$response" | jq -e . >/dev/null 2>&1; then
             # Extract the first issue key from the response
              issue_id=$(echo "$response" | jq -r '.issues[0].key // "null"')
-            echo " issue_id from response $issue_id"
-          
+            
             if [ "$issue_count" -eq 0 ]; then
               echo "No issues found with the 'Dependabot' label in project 'ND'. Creating a new issue..."
               create_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
@@ -70,6 +69,9 @@ jobs:
                  -H "Content-Type: application/json" \
                  --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"labels\":[\"Dependabot\"]}}" \
                  "$JIRA_URL/rest/api/2/issue")
+            
+              echo "$create_response" 
+              
               new_issue_id=$(echo "$create_response" | jq -r '.key')
               echo "Created new issue $new_issue_id"
               echo "ISSUE_ID=$new_issue_id" >> $GITHUB_ENV
