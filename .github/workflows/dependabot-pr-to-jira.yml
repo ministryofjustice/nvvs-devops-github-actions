@@ -71,7 +71,7 @@ jobs:
           fi
 
           # Extract the first issue key from the response using jq
-          issue_id=$(echo "$response" | jq -r '.issues.key // empty')
+          issue_id=$(echo "$response" | jq -r '.issues[0].key // empty')
 
           if [ -z "$issue_id" ]; then
             echo "No issues found with the 'dependabot' label in project 'ND'."
