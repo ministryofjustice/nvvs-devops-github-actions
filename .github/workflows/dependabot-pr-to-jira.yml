@@ -38,15 +38,40 @@ jobs:
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
-          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/\\n/g')
+          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  Title: \(.title)  Branch: \(.headRefName)  URL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a[...]
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
-      
+      - name: Find Jira tickets in project ND labeled Dependabot
+        env:
+          JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
+          JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
+          JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+        run: |
+          echo "Searching for issues with the 'dependabot' label in project 'ND'..."
+
+          # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
+          JQL_QUERY='project="ND" AND labels="Dependabot"'
+
+          # Make API request to Jira to search for issues with the given label in the 'ND' project
+          response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
+            -X GET \
+            -H "Content-Type: application/json" \
+            "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY")
+
+          # Extract the first issue key from the response
+          issue_id=$(echo $response | jq -r '.issues[0].key')
+
+          if [ -z "$issue_id" ]; then
+            echo "No issues found with the 'dependabot' label in project 'ND'."
+          else
+            echo "Found issue $issue_id"
+            echo "ISSUE_ID=$issue_id" >> $GITHUB_ENV
+          fi
 
       - name: Log created or updated issue
         run: |
-          if [ -n "${{ env.ISSUE_TYPES }}" ]; then
-            echo "Issue ${{ env.ISSUE_TYPES }} was created or updated"
+          if [ -n "${{ env.ISSUE_ID }}" ]; then
+            echo "Issue ${{ env.ISSUE_ID }} was created or updated"
           else
             echo "Failed to create or update issue"
             exit 1
@@ -63,13 +88,14 @@ jobs:
                 issue_number: pr.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `${{ env.ISSUE_TYPES }} created or updated on Jira board`
+                body: `${{ env.ISSUE_ID }} created or updated on Jira board`
               });
             });
 
       - name: Transition issue
         uses: atlassian/gajira-transition@master
         with:
-          issue: ${{ env.ISSUE_TYPES }}
+          issue: ${{ env.ISSUE_ID
+            }}
           transition: "Backlog"
         continue-on-error: true
