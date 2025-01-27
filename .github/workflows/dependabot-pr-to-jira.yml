@@ -61,7 +61,7 @@ jobs:
               create_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
                  -X POST \
                  -H "Content-Type: application/json" \
-                 --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Updated Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"labels\":[\"JDTEST\"]}}" \
+                 --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"labels\":[\"JDTEST\"]}}" \
                  "$JIRA_URL/rest/api/2/issue")
               new_issue_id=$(echo "$create_response" | jq -r '.key')
               echo "Created new issue $new_issue_id"
@@ -71,7 +71,7 @@ jobs:
               update_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
                  -X PUT \
                  -H "Content-Type: application/json" \
-                 --data "{\"fields\":{\"description\":\"$PR_DESCRIPTION\"}}" \
+                 --data "{\"fields\":{\"description\":\"Updated $PR_DESCRIPTION\"}}" \
                  "$JIRA_URL/rest/api/2/issue/$issue_id")
               echo "Updated issue $issue_id"
               echo "ISSUE_ID=$issue_id" >> $GITHUB_ENV
