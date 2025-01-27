@@ -37,7 +37,7 @@ jobs:
         id: format-prs
         run: |
           # Format PR details into a description suitable for a Jira issue
-          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  \nTitle: \(.title)  \nBranch: \(.headRefName) \nURL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | se[...]
+          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  \nTitle: \(.title)  \nBranch: \(.headRefName) \nURL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed 's/$/\\n/')
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
       # Step: Find Jira tickets in project ND labeled 'Dependabot'
