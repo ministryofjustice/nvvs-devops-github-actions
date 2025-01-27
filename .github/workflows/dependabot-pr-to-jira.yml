@@ -56,9 +56,6 @@ jobs:
           issue_count=$(echo "$response" | jq '.issues | length')
           echo "Number of issues found: $issue_count"
           
-          echo "Jira response: $response"
-          
-          
           # Check if the response is valid JSON
 
           if echo "$response" | jq -e . >/dev/null 2>&1; then
@@ -66,7 +63,7 @@ jobs:
              issue_id=$(echo "$response" | jq -r '.issues[0].key // "null"')
             echo " issue_id from response $issue_id"
           
-            if [ -z "$issue_id" ]; then
+            if [ "$issue_count" -eq 0 ]; then
               echo "No issues found with the 'Dependabot' label in project 'ND'. Creating a new issue..."
               create_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
                  -X POST \
