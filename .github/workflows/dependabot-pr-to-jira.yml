@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Create or Update Jira Ticket
     steps:
-      -
+
       - name: List open Dependabot PRs on main branch
         id: list-prs
         env:
