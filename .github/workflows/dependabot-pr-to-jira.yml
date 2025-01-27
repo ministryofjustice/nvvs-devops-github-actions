@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Create or Update Jira Ticket
     steps:
-      # Step 1: List open Dependabot PRs on the main branch
+      # Step: List open Dependabot PRs on the main branch
       - name: List open Dependabot PRs on main branch
         id: list-prs
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Get a list of open PRs with the 'dependabot' label, and save them to a JSON file
+          # Get a list of open PRs created by  'dependabot' and save them to a JSON file
           gh pr list --repo ${{ github.repository }} --base main --json number,title,headRefName -A app/dependabot --search "status:success review:none" > pr_list.json
           
           # Check if the output is valid JSON
@@ -32,15 +32,15 @@ jobs:
             exit 1
           fi
 
-      # Step 2: Format the PRs for Jira ticket description
+      # Step: Format the PRs for Jira ticket description
       - name: Format PRs for Jira ticket Description
         id: format-prs
         run: |
           # Format PR details into a description suitable for a Jira issue
-          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  \nTitle: \(.title)  \nBranch: \(.headRefName) \nURL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | sed ':a;N;$!ba;s/\n/\\n/g')
+          PR_DESCRIPTION=$(jq -r '.[] | "- PR Number: \(.number)  \nTitle: \(.title)  \nBranch: \(.headRefName) \nURL: https://github.com/${{ github.repository }}/pull/\(.number)\n"' pr_list.json | se[...]
           echo "PR_DESCRIPTION=$PR_DESCRIPTION" >> $GITHUB_ENV
 
-      # Step 3: Find Jira tickets in project ND labeled 'Dependabot'
+      # Step: Find Jira tickets in project ND labeled 'Dependabot'
       - name: Find Jira tickets in project ND labeled Dependabot
         id: find-jira-ticket
         env:
@@ -48,69 +48,65 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
           JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
         run: |
-          CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
           echo "Searching for issues with the 'Dependabot' label in project 'ND'..."
-          
-          # Define JQL query to find issues with the 'Dependabot' label in the 'ND' project
           JQL_QUERY='project = ND AND labels in (Dependabot)'
-          
-          # Make API request to Jira to search for issues with the given label in the 'ND' project
           response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
             -X GET \
             -H "Content-Type: application/json" \
-            "$JIRA_URL/rest/api/2/search?jql=project=ND%20AND%20labels%3D%27Dependabot%27")
-          
-          # Count the number of issues returned by Jira
+            "$JIRA_URL/rest/api/2/search?jql=$JQL_QUERY")
+          echo "$response" > jira_search_response.json
           issue_count=$(echo "$response" | jq '.issues | length')
           echo "Number of issues found: $issue_count"
-          
-          # Check if the response is valid JSON
           if echo "$response" | jq -e . >/dev/null 2>&1; then
-            # Extract the issue key (ID) of the first issue from the response
             issue_id=$(echo "$response" | jq -r '.issues[0].key // "null"')
-          
-            # If no issues are found, create a new issue
-            if [ "$issue_count" -eq 0 ]; then
-              echo "No issues found with the 'Dependabot' label in project 'ND'. Creating a new issue..."
-          
-              # Create a new Jira issue with the formatted PR description
-              create_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
-                 -X POST \
-                 -H "Content-Type: application/json" \
-                 --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"issuetype\":{\"name\":\"Story\"},\"labels\":[\"Dependabot\"]}}" \
-                 "$JIRA_URL/rest/api/2/issue")
-          
-              # Output the full response for logging
-              echo "$create_response" 
-          
-              # Extract the issue ID of the newly created issue
-              new_issue_id=$(echo "$create_response" | jq -r '.key')
-              echo "Created new issue $new_issue_id"
-              echo "ISSUE_ID=$new_issue_id" >> $GITHUB_ENV
-            else
-              # If an issue exists, update the description
-              echo "Found issue $issue_id. Updating the description..."
-          
-              # Update the existing issue's description with new PR details
-              update_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
-                 -X PUT \
-                 -H "Content-Type: application/json" \
-                 --data "{\"fields\":{\"description\":\"Updated on $CURRENT_DATE \n $PR_DESCRIPTION\"}}" \
-                 "$JIRA_URL/rest/api/2/issue/$issue_id")
-              echo "Updated issue $issue_id"
-              echo "ISSUE_ID=$issue_id" >> $GITHUB_ENV
-            fi
+            echo "ISSUE_ID=$issue_id" >> $GITHUB_ENV
           else
-            # If the response is invalid JSON, exit with an error
             echo "Invalid JSON response"
             exit 1
           fi
 
-      # Step 4: Log the issue created or updated
+      # Step: Create Jira ticket if none found
+      - name: Create Jira ticket
+        if: env.ISSUE_ID == 'null'
+        id: create-jira-ticket
+        env:
+          JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
+          JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
+          JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+        run: |
+          echo "No issues found with the 'Dependabot' label in project 'ND'. Creating a new issue..."
+          create_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
+             -X POST \
+             -H "Content-Type: application/json" \
+             --data "{\"fields\":{\"project\":{\"key\":\"ND\"},\"summary\":\"Dependabot PRs\",\"description\":\"$PR_DESCRIPTION\",\"issuetype\":{\"name\":\"Story\"},\"labels\":[\"Dependabot\"]}}" \
+             "$JIRA_URL/rest/api/2/issue")
+          echo "$create_response" 
+          new_issue_id=$(echo "$create_response" | jq -r '.key')
+          echo "Created new issue $new_issue_id"
+          echo "ISSUE_ID=$new_issue_id" >> $GITHUB_ENV
+
+      # Step: Update Jira ticket if found
+      - name: Update Jira ticket
+        if: env.ISSUE_ID != 'null'
+        id: update-jira-ticket
+        env:
+          JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
+          JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
+          JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+        run: |
+          CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
+          echo "Found issue ${{ env.ISSUE_ID }}. Updating the description..."
+          update_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
+             -X PUT \
+             -H "Content-Type: application/json" \
+             --data "{\"fields\":{\"description\":\"Updated on $CURRENT_DATE \n $PR_DESCRIPTION\"}}" \
+             "$JIRA_URL/rest/api/2/issue/${{ env.ISSUE_ID }}")
+          echo "Updated issue ${{ env.ISSUE_ID }}"
+
+      # Step: Log the issue created or updated
       - name: Log created or updated issue
         id: log-issue-update
         run: |
-          # Check if the ISSUE_ID environment variable is set
           if [ -n "${{ env.ISSUE_ID }}" ]; then
             echo "Issue ${{ env.ISSUE_ID }} was created or updated"
           else
@@ -118,7 +114,7 @@ jobs:
             exit 1
           fi
 
-      # Step 5: Comment on all related PRs on GitHub
+      # Step: Comment on all related PRs on GitHub
       - name: Comment on GitHub
         id: comment-prs
         uses: actions/github-script@v7
@@ -136,7 +132,7 @@ jobs:
               });
             });
 
-      # Step 6: Find transition ID for 'Backlog' in Jira
+      # Step: Find transition ID for 'Backlog' in Jira
       - name: Find transition ID for Backlog
         id: transition-issue
         env:
@@ -144,20 +140,13 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
           JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
         run: |
-          # Get the available transitions for the Jira issue
           transition_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
             -X GET \
             -H "Content-Type: application/json" \
             "$JIRA_URL/rest/api/2/issue/${{ env.ISSUE_ID }}/transitions")
-          
-          # Find the transition ID for 'Backlog'
           transition_id=$(echo "$transition_response" | jq -r '.transitions[] | select(.name=="Backlog") | .id')
-          
-          # If the transition ID is not found, exit with an error
           if [ -z "$transition_id" ]; then
             echo "Failed to find transition ID for 'Backlog'"
             exit 1
           fi
-          
-          # Output the transition ID for logging
           echo "TRANSITION_ID=$transition_id" >> $GITHUB_ENV
