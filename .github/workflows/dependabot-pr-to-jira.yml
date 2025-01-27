@@ -106,9 +106,22 @@ jobs:
               });
             });
 
-      - name: Transition issue
-        uses: atlassian/gajira-transition@master
-        with:
-          issue: ${{ env.ISSUE_ID}}
-          transition: "Backlog"
-        continue-on-error: true
+      - name: Find transition ID for Backlog
+        env:
+          JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
+          JIRA_API_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
+          JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+        run: |
+          transition_response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
+            -X GET \
+            -H "Content-Type: application/json" \
+            "$JIRA_URL/rest/api/2/issue/${{ env.ISSUE_ID }}/transitions")
+          
+          transition_id=$(echo "$transition_response" | jq -r '.transitions[] | select(.name=="Backlog") | .id')
+          
+          if [ -z "$transition_id" ]; then
+            echo "Failed to find transition ID for 'Backlog'"
+            exit 1
+          fi
+          
+          echo "TRANSITION_ID=$transition_id" >> $GITHUB_ENV
