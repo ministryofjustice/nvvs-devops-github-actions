@@ -50,7 +50,7 @@ jobs:
           echo "Searching for issues with the 'dependabot' label in project 'ND'..."
 
           # Define JQL query to find issues with the 'dependabot' label in the 'ND' project
-          JQL_QUERY="project=ND AND labels=Dependabot"
+          JQL_QUERY="project=ND AND labels=jira_dependabot"
 
           # URL encode the JQL query to handle special characters
           JQL_QUERY=$(echo "$JQL_QUERY" | jq -sRr @uri)
