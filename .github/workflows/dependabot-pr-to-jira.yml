@@ -56,6 +56,7 @@ jobs:
           if echo "$response" | jq -e . >/dev/null 2>&1; then
             # Extract the first issue key from the response
             issue_id=$(echo "$response" | jq -r '.issues[0].key')
+            echo " issue_id from response $issue_id"
           
             if [ -z "$issue_id" ]; then
               echo "No issues found with the 'Dependabot' label in project 'ND'. Creating a new issue..."
