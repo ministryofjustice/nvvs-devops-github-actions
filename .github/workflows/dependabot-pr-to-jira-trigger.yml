@@ -1,14 +1,33 @@
-name: Add Issue to Jira Board On new Dependabot PR's
+#name: Add Issue to Jira Board with details of Dependabot PR's
+#
+#on:
+#  push:
+#    branches:
+#      - ND-271-spike-dependabot-ticket-auto-creation-in-jira
+#
+#jobs:
+#  call-workflow-dependabot-pr-to-jira:
+#    if: github.ref == 'refs/heads/ND-271-spike-dependabot-ticket-auto-creation-in-jira'
+#    uses: ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml@ND-271-spike-dependabot-ticket-auto-creation-in-jira
+#    secrets:
+#      TECH_SERVICES_JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
+#      TECH_SERVICES_JIRA_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
+#      TECH_SERVICES_JIRA_TOKEN: ${{ secrets.TECH_SERVICES_JIRA_TOKEN }}
+
+
+name: Add Issue to Jira Board with details of Dependabot PR's
 
 on:
+  schedule:
+    - cron: '0 16 * * 1' # Runs every Monday at 4 PM UTC
   push:
     branches:
-      - ND-271-spike-dependabot-ticket-auto-creation-in-jira
+      - main
 
 jobs:
   call-workflow-dependabot-pr-to-jira:
-    if: github.ref == 'refs/heads/ND-271-spike-dependabot-ticket-auto-creation-in-jira'
-    uses: ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml@ND-271-spike-dependabot-ticket-auto-creation-in-jira
+    if: github.ref == 'refs/heads/main'
+    uses: ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml@main
     secrets:
       TECH_SERVICES_JIRA_URL: ${{ secrets.TECH_SERVICES_JIRA_URL }}
       TECH_SERVICES_JIRA_EMAIL: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
