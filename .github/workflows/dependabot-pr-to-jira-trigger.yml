@@ -20,9 +20,6 @@ name: Add Issue to Jira Board with details of Dependabot PR's
 on:
   schedule:
     - cron: '0 16 * * 1' # Runs every Monday at 4 PM UTC
-  push:
-    branches:
-      - main
 
 jobs:
   call-workflow-dependabot-pr-to-jira:
