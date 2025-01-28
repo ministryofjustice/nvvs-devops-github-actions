@@ -78,13 +78,14 @@ Add the `issue-to-project.yml` to the repository (`./github/workflows/issue-to-p
 
 ## Dependabot PR to Jira
 
-dependabot-pr-to-jira.yml workflow automates the process of creating or updating Jira tickets for open Dependabot pull requests (PRs) within a GitHub repository. 
-The workflow is scheduled to run every Monday at 4 PM UTC, ensuring regular tracking of new Dependabot PRs. 
+dependabot-pr-to-jira.yml workflow automates the process of creating or updating Jira tickets for open Dependabot pull requests (PRs) within a GitHub repository.
+The workflow is scheduled to run every Monday at 4 PM UTC, ensuring regular tracking of new Dependabot PRs.
 It integrates GitHub with Jira to automatically create and update Jira issues with relevant PR details, improving visibility and streamlining dependency management.
 
 Add the `dependabot-pr-to-jira.yml` to the repository (`./github/workflows/dependabot-pr-to-jira.yml`), this file calls the `ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml`.
 
 ### Workflow Steps:
+
 ### Trigger:
 
 Scheduled Trigger: The workflow is set to run every Monday at 4 PM UTC (via cron) to capture any open Dependabot PRs and create/update Jira tickets for them.
