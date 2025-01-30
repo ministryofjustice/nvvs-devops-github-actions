@@ -55,7 +55,7 @@ jobs:
           JIRA_USERNAME: ${{ secrets.TECH_SERVICES_JIRA_EMAIL }}
         run: |
           echo "Searching for issues with the 'Dependabot' label in project 'ND'..."
-          JQL_QUERY='project = ND AND labels in (Dependabot)'
+          JQL_QUERY='project = ND AND labels in (Dependabot) AND state in (Backlog)'
           response=$(curl -s -u $JIRA_USERNAME:$JIRA_API_TOKEN \
             -X GET \
             -H "Content-Type: application/json" \
