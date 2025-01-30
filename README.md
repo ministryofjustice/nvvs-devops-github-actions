@@ -8,6 +8,7 @@ This repository was created as a central location to hold, manage and maintain o
 - [Label Pull Request](#label-pull-request)
 - [Issue to Jira](#issue-to-jira)
 - [Issue to Project](#issue-to-project)
+- [Dependabot PR to Jira](#dependabot_pr_to_jira)
 
 ## Label Issues
 
@@ -74,3 +75,55 @@ Use this action to automatically add the current issue or pull request to a GitH
 Marketplace Link: https://github.com/marketplace/actions/add-to-github-projects
 
 Add the `issue-to-project.yml` to the repository (`./github/workflows/issue-to-project.yml`), this file call the `ministryofjustice/nvvs-devops-github-actions/.github/workflows/issue-to-project.yml@main` action when an issue is opened. This action automatically adds the issue the GitHub project specified in the `project-url`.
+
+## Dependabot PR to Jira
+
+dependabot-pr-to-jira.yml workflow automates the process of creating or updating Jira tickets for open Dependabot pull requests (PRs) within a GitHub repository.
+The workflow is scheduled to run every Monday at 4 PM UTC, ensuring regular tracking of new Dependabot PRs.
+It integrates GitHub with Jira to automatically create and update Jira issues with relevant PR details, improving visibility and streamlining dependency management.
+
+Add the `dependabot-pr-to-jira.yml` to the repository (`./github/workflows/dependabot-pr-to-jira.yml`), this file calls the `ministryofjustice/nvvs-devops-github-actions/.github/workflows/dependabot-pr-to-jira.yml`.
+
+### Workflow Steps:
+
+### Trigger:
+
+Scheduled Trigger: The workflow is set to run every Monday at 4 PM UTC (via cron) to capture any open Dependabot PRs and create/update Jira tickets for them.
+
+Input Secrets: The workflow requires three secrets to authenticate and interact with Jira:
+
+TECH_SERVICES_JIRA_URL: Jira instance URL.
+TECH_SERVICES_JIRA_EMAIL: Email address for Jira authentication.
+TECH_SERVICES_JIRA_TOKEN: API token for Jira authentication.
+
+### Job: check-open-prs:
+
+Runs on: ubuntu-latest (GitHub-hosted runner).
+
+Purpose: This job is responsible for checking open Dependabot PRs, either creating or updating a Jira ticket with relevant PR details.
+
+### Steps:
+
+Set Repository Name: Extracts and stores the repository name for later use (e.g., in PR comments or Jira issue links).
+
+List Open Dependabot PRs: Uses GitHub CLI (gh) to list open PRs created by Dependabot. These PRs are filtered by their status (status:success and review:none).
+
+Format PR Details: PR details (number, title, branch name, and PR URL) are formatted into a description suitable for Jira.
+
+Find Existing Jira Tickets: Queries Jira using a JQL query to find any existing issues with the Dependabot label in the ND project.
+
+Create Jira Ticket: If no matching ticket is found, a new Jira issue is created with the formatted PR details.
+
+Update Jira Ticket: If an existing issue is found, the ticket's description is updated with the latest PR details and timestamp.
+
+Log the Issue: Logs the newly created or updated Jira ticket's ID.
+
+Comment on PRs: Comments on all related PRs in the GitHub repository, providing visibility that a Jira issue has been created or updated.
+
+Find Transition ID for Backlog: Retrieves the transition ID for moving the issue to the "Backlog" state in Jira (if needed for future steps).
+
+### Workflow Integrations:
+
+GitHub CLI (gh): Interacts with GitHub to list open PRs and fetch necessary details.
+
+Jira API: Used to interact with Jira for searching issues, creating new ones, updating existing issues, and managing transitions like moving issues to the "Backlog" state.
